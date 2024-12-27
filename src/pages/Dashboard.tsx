@@ -1,11 +1,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { LogOut } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { ProductForm } from "@/components/ProductForm"
 import { ProductList } from "@/components/ProductList"
 import type { ProductFormValues } from "@/schemas/product"
+import jsPDF from "jspdf"
 
 interface Product {
   id: number
@@ -54,7 +55,7 @@ const Dashboard = () => {
     navigate("/login")
   }
 
-  const handleGeneratePDF = () => {
+  const generatePDF = () => {
     if (products.length === 0) {
       toast({
         variant: "destructive",
@@ -64,18 +65,59 @@ const Dashboard = () => {
       return
     }
 
-    toast({
-      title: "Generating Invoice",
-      description: "Your invoice is being generated...",
+    const doc = new jsPDF()
+    let yPos = 20
+
+    // Add header
+    doc.setFontSize(20)
+    doc.text("Invoice", 20, yPos)
+    yPos += 20
+
+    // Add date
+    doc.setFontSize(12)
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, yPos)
+    yPos += 20
+
+    // Add table headers
+    doc.setFontSize(12)
+    doc.text("Product", 20, yPos)
+    doc.text("Price", 80, yPos)
+    doc.text("Qty", 120, yPos)
+    doc.text("Total", 160, yPos)
+    yPos += 10
+
+    // Add products
+    let subtotal = 0
+    products.forEach((product) => {
+      const total = product.price * product.quantity
+      subtotal += total
+
+      doc.text(product.name, 20, yPos)
+      doc.text(`₹${product.price.toFixed(2)}`, 80, yPos)
+      doc.text(product.quantity.toString(), 120, yPos)
+      doc.text(`₹${total.toFixed(2)}`, 160, yPos)
+      yPos += 10
     })
 
-    // Here you would typically generate and download the PDF
-    setTimeout(() => {
-      toast({
-        title: "Invoice Generated",
-        description: "Your invoice has been downloaded successfully.",
-      })
-    }, 1500)
+    yPos += 10
+    // Add totals
+    const gst = subtotal * 0.18
+    const total = subtotal + gst
+
+    doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 120, yPos)
+    yPos += 10
+    doc.text(`GST (18%): ₹${gst.toFixed(2)}`, 120, yPos)
+    yPos += 10
+    doc.setFontSize(14)
+    doc.text(`Total: ₹${total.toFixed(2)}`, 120, yPos)
+
+    // Save the PDF
+    doc.save("invoice.pdf")
+    
+    toast({
+      title: "Invoice Generated",
+      description: "Your invoice has been downloaded successfully.",
+    })
   }
 
   return (
@@ -100,7 +142,7 @@ const Dashboard = () => {
             products={products}
             sortOrder={sortOrder}
             onToggleSort={toggleSort}
-            onGeneratePDF={handleGeneratePDF}
+            onGeneratePDF={generatePDF}
           />
         )}
       </div>
