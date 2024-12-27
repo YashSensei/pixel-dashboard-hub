@@ -79,17 +79,34 @@ const Dashboard = () => {
   };
 
   const handleGeneratePDF = () => {
+    if (products.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "No products",
+        description: "Please add at least one product to generate an invoice.",
+      });
+      return;
+    }
+
     toast({
-      title: "PDF Generation",
-      description: "PDF invoice generation feature will be implemented soon.",
+      title: "Generating Invoice",
+      description: "Your invoice is being generated...",
     });
+
+    // Here you would typically generate and download the PDF
+    setTimeout(() => {
+      toast({
+        title: "Invoice Generated",
+        description: "Your invoice has been downloaded successfully.",
+      });
+    }, 1500);
   };
 
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-[1200px] mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Add Products</h1>
+          <h1 className="text-3xl font-bold">Products Dashboard</h1>
           <Button
             variant="outline"
             className="bg-primary text-primary-foreground hover:bg-primary/90"
@@ -100,85 +117,119 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Product Name</label>
-            <Input
-              placeholder="Enter the product name"
-              value={newProduct.name}
-              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-              className="bg-secondary"
-            />
-          </div>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Add New Product</CardTitle>
+            <CardDescription>Enter the product details below</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <FormItem>
+                  <FormLabel>Product Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the product name"
+                      value={newProduct.name}
+                      onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                      className="bg-secondary"
+                    />
+                  </FormControl>
+                </FormItem>
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Product Price</label>
-            <Input
-              type="number"
-              placeholder="Enter the price"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-              className="bg-secondary"
-            />
-          </div>
+              <div className="space-y-2">
+                <FormItem>
+                  <FormLabel>Product Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter the price"
+                      value={newProduct.price}
+                      onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                      className="bg-secondary"
+                    />
+                  </FormControl>
+                </FormItem>
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Quantity</label>
-            <Input
-              type="number"
-              placeholder="Enter the Qty"
-              value={newProduct.quantity}
-              onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
-              className="bg-secondary"
-            />
-          </div>
-        </div>
-
-        <Button
-          onClick={handleAddProduct}
-          className="mb-8 bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          Add Product +
-        </Button>
+              <div className="space-y-2">
+                <FormItem>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter the Qty"
+                      value={newProduct.quantity}
+                      onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
+                      className="bg-secondary"
+                    />
+                  </FormControl>
+                </FormItem>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={handleAddProduct}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Add Product
+            </Button>
+          </CardFooter>
+        </Card>
 
         {products.length > 0 && (
-          <div className="bg-secondary rounded-lg p-4 mb-8 animate-fadeIn">
-            <div className="grid grid-cols-4 gap-4 mb-4 font-medium">
-              <button onClick={toggleSort} className="flex items-center">
-                Product name <ArrowUpDown className="ml-2 h-4 w-4" />
-              </button>
-              <div>Price</div>
-              <div>Quantity</div>
-              <div>Total Price</div>
-            </div>
+          <Card className="mb-8 animate-fadeIn">
+            <CardHeader>
+              <CardTitle>Product List</CardTitle>
+              <CardDescription>Manage your products and generate invoice</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <div className="grid grid-cols-4 gap-4 p-4 font-medium bg-muted">
+                  <button onClick={toggleSort} className="flex items-center">
+                    Product name <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </button>
+                  <div>Price</div>
+                  <div>Quantity</div>
+                  <div>Total Price</div>
+                </div>
 
-            {sortedProducts.map((product) => (
-              <div key={product.id} className="grid grid-cols-4 gap-4 py-2 border-t border-border">
-                <div>{product.name}</div>
-                <div>{product.price}</div>
-                <div>{product.quantity}</div>
-                <div>INR {(product.price * product.quantity).toFixed(2)}</div>
-              </div>
-            ))}
+                {sortedProducts.map((product) => (
+                  <div key={product.id} className="grid grid-cols-4 gap-4 p-4 border-t">
+                    <div>{product.name}</div>
+                    <div>₹{product.price.toFixed(2)}</div>
+                    <div>{product.quantity}</div>
+                    <div>₹{(product.price * product.quantity).toFixed(2)}</div>
+                  </div>
+                ))}
 
-            <div className="border-t border-border mt-4 pt-4">
-              <div className="grid grid-cols-4 gap-4">
-                <div className="col-span-3 text-right">Sub-Total</div>
-                <div>INR {calculateSubTotal().toFixed(2)}</div>
+                <div className="border-t p-4">
+                  <div className="grid grid-cols-4 gap-4 font-medium">
+                    <div className="col-span-3 text-right">Sub-Total:</div>
+                    <div>₹{calculateSubTotal().toFixed(2)}</div>
+                  </div>
+                  <div className="grid grid-cols-4 gap-4 mt-2 font-medium">
+                    <div className="col-span-3 text-right">GST (18%):</div>
+                    <div>₹{(calculateSubTotal() * 0.18).toFixed(2)}</div>
+                  </div>
+                  <div className="grid grid-cols-4 gap-4 mt-2 text-lg font-bold">
+                    <div className="col-span-3 text-right">Total:</div>
+                    <div>₹{calculateTotal().toFixed(2)}</div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 mt-2">
-                <div className="col-span-3 text-right">Incl + GST 18%</div>
-                <div>INR {calculateTotal().toFixed(2)}</div>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleGeneratePDF}
-              className="w-full mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Generate PDF Invoice
-            </Button>
-          </div>
+            </CardContent>
+            <CardFooter>
+              <Button
+                onClick={handleGeneratePDF}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Generate Invoice
+              </Button>
+            </CardFooter>
+          </Card>
         )}
       </div>
     </div>

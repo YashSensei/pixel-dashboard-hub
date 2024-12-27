@@ -3,62 +3,67 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
+const signupSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+});
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const validateForm = () => {
-    if (!name || !email || !password) {
-      toast({
-        variant: "destructive",
-        title: "All fields are required",
-        description: "Please fill in all fields to continue.",
-      });
-      return false;
-    }
-    if (!email.includes("@")) {
-      toast({
-        variant: "destructive",
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-      });
-      return false;
-    }
-    if (password.length < 6) {
-      toast({
-        variant: "destructive",
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
-      });
-      return false;
-    }
-    return true;
-  };
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setLoading(true);
-    // Here you would typically make an API call to register the user
-    // For now, we'll simulate success and redirect
-    setTimeout(() => {
-      setLoading(false);
+  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+    try {
+      setLoading(true);
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       toast({
         title: "Account created successfully!",
         description: "Welcome to Levitation Infotech.",
       });
       navigate("/dashboard");
-    }, 1500);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row items-center gap-8">
         <div className="flex-1 animate-fadeIn">
           <img
@@ -68,72 +73,75 @@ const Signup = () => {
           />
         </div>
         
-        <div className="flex-1 w-full max-w-md space-y-8 animate-fadeIn">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-2">Sign up to begin journey</h2>
-            <p className="text-muted-foreground">
-              This is basic signup page which is used for levitation assignment purpose.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Enter your name</label>
-              <Input
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-secondary"
-              />
-              <p className="text-xs text-muted-foreground">
-                This name will be displayed with your inquiry
+        <div className="flex-1 w-full max-w-md animate-fadeIn">
+          <Card className="border-none shadow-lg">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold">Sign up</CardTitle>
+              <CardDescription>
+                Create an account to get started with Levitation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter your email" type="email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Create a password" type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={loading}
+                  >
+                    {loading ? "Creating account..." : "Sign up"}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+            <CardFooter>
+              <p className="text-sm text-muted-foreground text-center w-full">
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary hover:underline">
+                  Login here
+                </Link>
               </p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Email Address</label>
-              <Input
-                type="email"
-                placeholder="Enter Email ID"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-secondary"
-              />
-              <p className="text-xs text-muted-foreground">
-                This email will be displayed with your inquiry
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Password</label>
-              <Input
-                type="password"
-                placeholder="Enter the Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-secondary"
-              />
-              <p className="text-xs text-muted-foreground">
-                Any further updates will be forwarded on this Email ID
-              </p>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Register"}
-            </Button>
-
-            <p className="text-center text-sm">
-              Already have account?{" "}
-              <Link to="/login" className="text-primary hover:underline">
-                Login here
-              </Link>
-            </p>
-          </form>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </div>
