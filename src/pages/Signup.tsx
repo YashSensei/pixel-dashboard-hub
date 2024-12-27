@@ -63,85 +63,121 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-[1200px] flex flex-col lg:flex-row items-center gap-8">
-        <div className="flex-1 animate-fadeIn">
-          <img
-            src="/lovable-uploads/09d6ec14-7812-4bc8-b263-dd44a3ad75ae.png"
-            alt="Signup Banner"
-            className="w-full h-auto rounded-lg"
-          />
-        </div>
-        
-        <div className="flex-1 w-full max-w-md animate-fadeIn">
-          <Card className="border-none shadow-lg">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold">Sign up</CardTitle>
-              <CardDescription>
-                Create an account to get started with Levitation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter your name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter your email" type="email" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Create a password" type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+    <div className="min-h-screen relative overflow-x-hidden bg-[#0A0A0A] font-poppins">
+      {/* Background gradient circles - adjusted for better mobile view */}
+      <div className="absolute top-[-10%] right-[-20%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full bg-gradient-to-r from-[#98EC2D]/20 to-transparent blur-3xl" />
+      <div className="absolute bottom-[-10%] left-[-20%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] rounded-full bg-gradient-to-r from-[#98EC2D]/10 to-transparent blur-3xl" />
+
+      <div className="relative mx-auto h-full flex flex-col">
+        {/* Header - made padding responsive */}
+        <header className="py-4 flex justify-between items-center bg-[#1F1F1F] px-4 sm:px-8 md:px-20">
+          <img src="/logo.svg" alt="Levitation" className="h-6 md:h-8 font-canva-sans" />
+          <Button 
+            variant="outline" 
+            className="border-[#CCF575] text-[#CCF575] hover:bg-[#CCF575]/10 hover:text-[#CCF575]"
+          >
+            <Link to="/login">Login</Link>
+          </Button>
+        </header>
+
+        {/* Main content - adjusted padding and layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 flex-1 py-4 md:py-8 px-4 sm:px-8 md:px-20">
+          {/* Left side content */}
+          <div className="space-y-6 w-full max-w-2xl mx-auto">
+            <div className="space-y-3">
+              <h1 className="text-3xl md:text-5xl font-semibold text-white tracking-tight font-pretendard">
+                Sign up to begin journey
+              </h1>
+              <p className="text-gray-400 text-lg">
+                This is basic signup page which is used for levitation assignment purpose.
+              </p>
+            </div>
+
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-white text-sm font-poppins">Enter your name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter Email ID" 
+                          {...field}
+                          className="h-10 w-full max-w-md bg-[#202020] border border-[#424647] focus:border-[#dcf0c3] focus:ring-[#98EC2D]/20 text-white font-poppins text-sm" 
+                        />
+                      </FormControl>
+                      <p className="text-xs text-gray-500 font-poppins">This name will be displayed with your inquiry</p>
+                      <FormMessage className="text-red-400 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-white text-sm font-poppins">Email Address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter Email ID" 
+                          type="email" 
+                          {...field}
+                          className="h-10 w-full max-w-md bg-[#202020] border border-[#424647] focus:border-[#dcf0c3] focus:ring-[#98EC2D]/20 text-white font-poppins text-sm" 
+                        />
+                      </FormControl>
+                      <p className="text-xs text-gray-500 font-poppins">This email will be displayed with your inquiry</p>
+                      <FormMessage className="text-red-400 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="space-y-1">
+                      <FormLabel className="text-white text-sm font-poppins">Password</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter the Password" 
+                          type="password" 
+                          {...field}
+                          className="h-10 w-full max-w-md bg-[#202020] border border-[#424647] focus:border-[#dcf0c3] focus:ring-[#98EC2D]/20 text-white font-poppins text-sm" 
+                        />
+                      </FormControl>
+                      <p className="text-xs text-gray-500 font-poppins">Any further updates will be forwarded on this Email ID</p>
+                      <FormMessage className="text-red-400 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
                   <Button
                     type="submit"
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="w-full sm:w-auto bg-gradient-to-r from-[#141414] to-[#303030] text-[#98EC2D] hover:bg-[#98EC2D]/90 px-8 h-10 text-sm font-medium"
                     disabled={loading}
                   >
-                    {loading ? "Creating account..." : "Sign up"}
+                    Register
                   </Button>
-                </form>
-              </Form>
-            </CardContent>
-            <CardFooter>
-              <p className="text-sm text-muted-foreground text-center w-full">
-                Already have an account?{" "}
-                <Link to="/login" className="text-primary hover:underline">
-                  Login here
-                </Link>
-              </p>
-            </CardFooter>
-          </Card>
+                  <span className="text-gray-500">Already have account ?</span>
+                </div>
+              </form>
+            </Form>
+          </div>
+
+          {/* Right side image - made responsive */}
+          <div className="hidden lg:flex lg:items-center">
+            <div className="relative w-full aspect-[4/3] max-w-2xl mx-auto">
+              <img
+                src="/images/signup.png"
+                alt="Connecting People With Technology"
+                className="w-full h-full object-cover rounded-xl shadow-2xl"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
