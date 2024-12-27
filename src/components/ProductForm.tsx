@@ -33,6 +33,11 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
     },
   })
 
+  const handleSubmit = async (values: ProductFormValues) => {
+    onSubmit(values)
+    form.reset()
+  }
+
   return (
     <Card className="mb-8">
       <CardHeader>
@@ -40,7 +45,7 @@ export function ProductForm({ onSubmit }: ProductFormProps) {
         <CardDescription>Enter the product details below</CardDescription>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
